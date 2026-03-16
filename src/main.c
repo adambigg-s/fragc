@@ -17,10 +17,8 @@ int main() {
     }
 
     Sampler new_image = {};
-    new_image.data = malloc(image.height * image.width * 3);
-    new_image.height = image.height;
-    new_image.width = image.width;
-    if (!new_image.data) {
+    success = sampler_clone(&image, &new_image);
+    if (!success) {
         exit(3);
     }
 
@@ -30,9 +28,9 @@ int main() {
             Vec2 uv = vec2(((f32)col + 0.5) / image.width, ((f32)row + 0.5) / image.height);
             Vec4 out = frag(&uni, &image, uv);
             u8 *color = sampler_get(&new_image, col, row);
-            *(color + 0) = out.x * 255.0;
-            *(color + 1) = out.y * 255.0;
-            *(color + 2) = out.z * 255.0;
+            color[0] = out.x * 255.0;
+            color[1] = out.y * 255.0;
+            color[2] = out.z * 255.0;
         }
     }
 
