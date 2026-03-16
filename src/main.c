@@ -1,4 +1,6 @@
 #include "shader.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../vendor/stb/stb_image.h"
@@ -14,26 +16,34 @@ int main() {
         exit(3);
     }
 
+    Sampler new_image = {};
+    new_image.data = malloc(image.height * image.width * 3);
+    new_image.height = image.height;
+    new_image.width = image.width;
+    if (!new_image.data) {
+        exit(3);
+    }
+
     for (usize row = 0; row < image.height; row++) {
         for (usize col = 0; col < image.width; col++) {
             Uniform uni = {};
-            Vec2 uv = vec2((f32)col / image.width, (f32)row / image.height);
+            Vec2 uv = vec2(((f32)col + 0.5) / image.width, ((f32)row + 0.5) / image.height);
             Vec4 out = frag(&uni, &image, uv);
-
-            u8 *color = sampler_get(&image, col, row);
-
+            u8 *color = sampler_get(&new_image, col, row);
             *(color + 0) = out.x * 255.0;
             *(color + 1) = out.y * 255.0;
             *(color + 2) = out.z * 255.0;
         }
     }
 
-    success = sampler_write("target/output.png", &image);
+    success = sampler_write("target/output.png", &new_image);
     if (!success) {
         exit(3);
     }
 
     sampler_free(image);
-    printf("Image processed");
+    sampler_free(new_image);
+    fprintf(stdout, "Image processed\n");
+    fflush(stdout);
     return 0;
 }
