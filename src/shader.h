@@ -25,24 +25,6 @@ typedef int64_t i64;
 typedef uintptr_t usize;
 typedef intptr_t isize;
 
-f32 minx(f32 a, f32 b);
-
-f32 maxx(f32 a, f32 b);
-
-f32 clampx(f32 x, f32 min, f32 max);
-
-f32 signx(f32 x);
-
-f32 floorx(f32 x);
-
-f32 ceilx(f32 x);
-
-f32 fractx(f32 x);
-
-f32 mixx(f32 a, f32 b, f32 mix);
-
-f32 lerpx(f32 a, f32 b, f32 t);
-
 typedef struct vec2_t {
     f32 x;
     f32 y;
@@ -115,6 +97,42 @@ f32 vec4_mag(Vec4 v);
 
 Vec4 vec4_normalize(Vec4 v);
 
+typedef struct mat2_t {
+    f32 ele[2];
+} Mat2;
+
+f32 mat2_get(const Mat2 *mat, usize i, usize j);
+
+f32 *mat2_get_mut(Mat2 *mat, usize i, usize j);
+
+Vec2 mat2_mul2(Mat2 m, Vec2 v);
+
+Mat2 mat2_mulm(Mat2 a, Mat2 b);
+
+typedef struct mat3_t {
+    f32 ele[3];
+} Mat3;
+
+f32 mat3_get(const Mat3 *mat, usize i, usize j);
+
+f32 *mat3_get_mut(Mat3 *mat, usize i, usize j);
+
+Vec3 mat3_mul3(Mat3 m, Vec3 v);
+
+Mat3 mat3_mulm(Mat3 a, Mat3 b);
+
+typedef struct mat4_t {
+    f32 ele[4];
+} Mat4;
+
+f32 mat4_get(const Mat4 *mat, usize i, usize j);
+
+f32 *mat4_get_mut(Mat4 *mat, usize i, usize j);
+
+Vec4 mat4_mul4(Mat4 m, Vec4 v);
+
+Mat4 mat4_mulm(Mat4 a, Mat4 b);
+
 typedef struct uniform_t {
     f32 time;
     i32 width;
@@ -149,5 +167,23 @@ bool sampler_write(char *path, Sampler *sampler);
 void sampler_free(Sampler sampler);
 
 Vec4 frag(const Uniform *uniform, const Sampler *sampler, Vec2 uv);
+
+f32 minx(f32 a, f32 b);
+
+f32 maxx(f32 a, f32 b);
+
+f32 clampx(f32 x, f32 min, f32 max);
+
+f32 signx(f32 x);
+
+f32 floorx(f32 x);
+
+f32 ceilx(f32 x);
+
+f32 fractx(f32 x);
+
+f32 mixx(f32 a, f32 b, f32 mix);
+
+f32 lerpx(f32 a, f32 b, f32 t);
 
 #endif

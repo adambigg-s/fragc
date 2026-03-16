@@ -25,7 +25,7 @@ if not exist target mkdir target
 goto end
 
 :build
-%CC% %CFLAGS% -o .\target\main.exe .\src\main.c .\src\shader.c %SHADER%
+%CC% %CFLAGS% -o .\target\main.exe .\src\main.c .\src\shader.c .\src\shader_math.c %SHADER%
 goto end
 
 :run

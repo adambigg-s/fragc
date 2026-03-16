@@ -1,151 +1,5 @@
 #include "shader.h"
 
-f32 minx(f32 a, f32 b) {
-    return a < b ? a : b;
-}
-
-f32 maxx(f32 a, f32 b) {
-    return a > b ? a : b;
-}
-
-f32 clampx(f32 x, f32 min, f32 max) {
-    x < min ? x = min : x;
-    x > max ? x = max : x;
-    return x;
-}
-
-f32 signx(f32 x) {
-    return (x > 0) - (x < 0);
-}
-
-f32 floorx(f32 x) {
-    return (f32)(i32)x;
-}
-
-f32 ceilx(f32 x) {
-    return (f32)(i32)(x + 1.0);
-}
-
-f32 fractx(f32 x) {
-    return x - (f32)(i32)x;
-}
-
-f32 mixx(f32 a, f32 b, f32 mix) {
-    return mix * a + (1.0 - mix) * b;
-}
-
-f32 lerpx(f32 a, f32 b, f32 t) {
-    return (b - a) * t + a;
-}
-
-Vec2 vec2(f32 x, f32 y) {
-    return (Vec2){.x = x, .y = y};
-}
-
-Vec2 vec2_neg(Vec2 v) {
-    return (Vec2){.x = -v.x, .y = -v.y};
-}
-
-Vec2 vec2_add(Vec2 a, Vec2 b) {
-    return (Vec2){.x = a.x + b.x, .y = a.y + b.y};
-}
-
-Vec2 vec2_sub(Vec2 a, Vec2 b) {
-    return (Vec2){.x = a.x - b.x, .y = a.y - b.y};
-}
-
-Vec2 vec2_mul(Vec2 a, f32 b) {
-    return (Vec2){.x = a.x * b, .y = a.y * b};
-}
-
-Vec2 vec2_div(Vec2 a, f32 b) {
-    return (Vec2){.x = a.x / b, .y = a.y / b};
-}
-
-f32 vec2_dot(Vec2 a, Vec2 b) {
-    return a.x * b.x + a.y * b.y;
-}
-
-f32 vec2_mag(Vec2 v) {
-    return sqrtf(vec2_dot(v, v));
-}
-
-Vec2 vec2_normalize(Vec2 v) {
-    return vec2_div(v, vec2_mag(v));
-}
-
-Vec3 vec3(f32 x, f32 y, f32 z) {
-    return (Vec3){.x = x, .y = y, .z = z};
-}
-
-Vec3 vec3_neg(Vec3 v) {
-    return (Vec3){.x = -v.x, .y = -v.y, .z = -v.z};
-}
-
-Vec3 vec3_add(Vec3 a, Vec3 b) {
-    return (Vec3){.x = a.x + b.x, .y = a.y + b.y, .z = a.z + b.z};
-}
-
-Vec3 vec3_sub(Vec3 a, Vec3 b) {
-    return (Vec3){.x = a.x - b.x, .y = a.y - b.y, .z = a.z - b.z};
-}
-
-Vec3 vec3_mul(Vec3 a, f32 b) {
-    return (Vec3){.x = a.x * b, .y = a.y * b, .z = a.z * b};
-}
-
-Vec3 vec3_div(Vec3 a, f32 b) {
-    return (Vec3){.x = a.x / b, .y = a.y / b, .z = a.z / b};
-}
-
-f32 vec3_dot(Vec3 a, Vec3 b) {
-    return a.x * b.x + a.y * b.y + a.z * b.z;
-}
-
-f32 vec3_mag(Vec3 v) {
-    return sqrtf(vec3_dot(v, v));
-}
-
-Vec3 vec3_normalize(Vec3 v) {
-    return vec3_div(v, vec3_mag(v));
-}
-
-Vec4 vec4(f32 x, f32 y, f32 z, f32 w) {
-    return (Vec4){.x = x, .y = y, .z = z, .w = w};
-}
-
-Vec4 vec4_neg(Vec4 v) {
-    return (Vec4){.x = -v.x, .y = -v.y, .z = -v.z, .w = -v.w};
-}
-
-Vec4 vec4_add(Vec4 a, Vec4 b) {
-    return (Vec4){.x = a.x + b.x, .y = a.y + b.y, .z = a.z + b.z, .w = a.w + b.w};
-}
-
-Vec4 vec4_sub(Vec4 a, Vec4 b) {
-    return (Vec4){.x = a.x - b.x, .y = a.y - b.y, .z = a.z - b.z, .w = a.w - b.w};
-}
-
-Vec4 vec4_mul(Vec4 a, f32 b) {
-    return (Vec4){.x = a.x * b, .y = a.y * b, .z = a.z * b, .w = a.w * b};
-}
-
-Vec4 vec4_div(Vec4 a, f32 b) {
-    return (Vec4){.x = a.x / b, .y = a.y / b, .z = a.z / b, .w = a.w / b};
-}
-
-f32 vec4_dot(Vec4 a, Vec4 b) {
-    return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
-}
-
-f32 vec4_mag(Vec4 v) {
-    return sqrtf(vec4_dot(v, v));
-}
-
-Vec4 vec4_normalize(Vec4 v) {
-    return vec4_div(v, vec4_mag(v));
-}
-
 bool sampler_new(Sampler *sampler, usize width, usize height) {
     *sampler = (Sampler){.data = (u8 *)malloc(height * width * 3), .width = width, .height = height};
     if (!sampler->data) {
@@ -155,31 +9,47 @@ bool sampler_new(Sampler *sampler, usize width, usize height) {
     return true;
 }
 
+u8 *sampler_get(Sampler *sampler, usize x, usize y) {
+    return &sampler->data[(sampler->width * y + x) * 3];
+}
+
+Vec3 sampler_get_slice(const Sampler *sampler, usize x, usize y) {
+    u8 *ptr = &sampler->data[(sampler->width * y + x) * 3];
+    return vec3_div(vec3(ptr[0], ptr[1], ptr[2]), 255.0);
+}
+
 Vec4 sampler_sample_nearest(const Sampler *sampler, f32 x, f32 y) {
     isize sx = clampx(x * (sampler->width - 1), 0.0, sampler->width - 1);
     isize sy = clampx(y * (sampler->height - 1), 0.0, sampler->height - 1);
-    f32 r = sampler->data[(sampler->width * sy + sx) * 3 + 0] / 255.0;
-    f32 g = sampler->data[(sampler->width * sy + sx) * 3 + 1] / 255.0;
-    f32 b = sampler->data[(sampler->width * sy + sx) * 3 + 2] / 255.0;
-    return vec4(r, g, b, 1.0);
+    Vec3 color = sampler_get_slice(sampler, sx, sy);
+    return vec4(color.x, color.y, color.z, 1.0);
 }
 
 Vec4 sampler_sample_bilinear(const Sampler *sampler, f32 x, f32 y) {
-    isize sx = clampx(x * (sampler->width - 1), 0.0, sampler->width - 1);
-    isize sy = clampx(y * (sampler->height - 1), 0.0, sampler->height - 1);
-    f32 r = sampler->data[(sampler->width * sy + sx) * 3 + 0] / 255.0;
-    f32 g = sampler->data[(sampler->width * sy + sx) * 3 + 1] / 255.0;
-    f32 b = sampler->data[(sampler->width * sy + sx) * 3 + 2] / 255.0;
-    return vec4(r, g, b, 1.0);
+    f32 tx = clampx(x * (sampler->width - 1), 0.0, sampler->width - 1);
+    f32 ty = clampx(y * (sampler->height - 1), 0.0, sampler->height - 1);
+    f32 fx = fractx(tx);
+    f32 fy = fractx(ty);
+    isize sx = tx;
+    isize sy = ty;
+
+    Vec3 v00 = sampler_get_slice(sampler, sx, sy);
+    Vec3 v01 = sampler_get_slice(sampler, sx + 1, sy);
+    Vec3 v10 = sampler_get_slice(sampler, sx, sy + 1);
+    Vec3 v11 = sampler_get_slice(sampler, sx + 1, sy + 1);
+    f32 w00 = fx * fy;
+    f32 w01 = (1.0 - fx) * fy;
+    f32 w10 = fx * (1.0 - fy);
+    f32 w11 = (1.0 - fx) * (1.0 - fy);
+
+    Vec3 color = vec3_add(
+        vec3_add(vec3_add(vec3_mul(v00, w00), vec3_mul(v01, w01)), vec3_mul(v10, w10)), vec3_mul(v11, w11));
+
+    return vec4(color.x, color.y, color.z, 1.0);
 }
 
 Vec4 sampler_sample_trilinear(const Sampler *sampler, f32 x, f32 y) {
-    isize sx = clampx(x * (sampler->width - 1), 0.0, sampler->width - 1);
-    isize sy = clampx(y * (sampler->height - 1), 0.0, sampler->height - 1);
-    f32 r = sampler->data[(sampler->width * sy + sx) * 3 + 0] / 255.0;
-    f32 g = sampler->data[(sampler->width * sy + sx) * 3 + 1] / 255.0;
-    f32 b = sampler->data[(sampler->width * sy + sx) * 3 + 2] / 255.0;
-    return vec4(r, g, b, 1.0);
+    return vec4(0.0, 0.0, 0.0, 0.0);
 }
 
 Vec4 sample(const Sampler *sampler, SamplerMethod method, f32 x, f32 y) {
@@ -194,10 +64,6 @@ Vec4 sample(const Sampler *sampler, SamplerMethod method, f32 x, f32 y) {
         return sampler_sample_trilinear(sampler, x, y);
         break;
     }
-}
-
-u8 *sampler_get(Sampler *sampler, usize x, usize y) {
-    return &sampler->data[(sampler->width * y + x) * 3];
 }
 
 bool sampler_clone(const Sampler *from, Sampler *target) {
