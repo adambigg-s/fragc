@@ -1,6 +1,6 @@
 @echo off
 
-set CC=clang
+set CC=clang++
 set CFLAGS=-O1 -Wall -Wextra -g
 set COMMAND=%1
 set SHADER=%2
@@ -25,7 +25,7 @@ if not exist target mkdir target
 goto end
 
 :build
-%CC% %CFLAGS% -o .\target\main.exe .\src\main.c .\src\shader.c .\src\shader_math.c %SHADER%
+%CC% %CFLAGS% -o .\target\main.exe .\src\main.c .\src\shader.c .\src\shader_math.cpp %SHADER%
 goto end
 
 :run

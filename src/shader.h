@@ -4,6 +4,7 @@
 #include "../vendor/stb/stb_image.h"
 #include "../vendor/stb/stb_image_write.h"
 #include <assert.h>
+#include <deque>
 #include <float.h>
 #include <math.h>
 #include <stdbool.h>
@@ -48,6 +49,30 @@ f32 vec2_mag(Vec2 v);
 
 Vec2 vec2_normalize(Vec2 v);
 
+inline Vec2 operator-(const Vec2 v) {
+    return vec2_neg(v);
+}
+
+inline Vec2 operator+(const Vec2 a, const Vec2 b) {
+    return vec2_add(a, b);
+}
+
+inline Vec2 operator-(const Vec2 a, const Vec2 b) {
+    return vec2_sub(a, b);
+}
+
+inline Vec2 operator*(const Vec2 v, const f32 s) {
+    return vec2_mul(v, s);
+}
+
+inline f32 operator*(const Vec2 a, const Vec2 b) {
+    return vec2_dot(a, b);
+}
+
+inline Vec2 operator/(const Vec2 v, const f32 s) {
+    return vec2_div(v, s);
+}
+
 typedef struct vec3_t {
     f32 x;
     f32 y;
@@ -71,6 +96,30 @@ f32 vec3_dot(Vec3 a, Vec3 b);
 f32 vec3_mag(Vec3 v);
 
 Vec3 vec3_normalize(Vec3 v);
+
+inline Vec3 operator-(const Vec3 v) {
+    return vec3_neg(v);
+}
+
+inline Vec3 operator+(const Vec3 a, const Vec3 b) {
+    return vec3_add(a, b);
+}
+
+inline Vec3 operator-(const Vec3 a, const Vec3 b) {
+    return vec3_sub(a, b);
+}
+
+inline Vec3 operator*(const Vec3 v, const f32 s) {
+    return vec3_mul(v, s);
+}
+
+inline f32 operator*(const Vec3 a, const Vec3 b) {
+    return vec3_dot(a, b);
+}
+
+inline Vec3 operator/(const Vec3 v, const f32 s) {
+    return vec3_div(v, s);
+}
 
 typedef struct vec4_t {
     f32 x;
@@ -96,6 +145,30 @@ f32 vec4_dot(Vec4 a, Vec4 b);
 f32 vec4_mag(Vec4 v);
 
 Vec4 vec4_normalize(Vec4 v);
+
+inline Vec4 operator-(const Vec4 v) {
+    return vec4_neg(v);
+}
+
+inline Vec4 operator+(const Vec4 a, const Vec4 b) {
+    return vec4_add(a, b);
+}
+
+inline Vec4 operator-(const Vec4 a, const Vec4 b) {
+    return vec4_sub(a, b);
+}
+
+inline Vec4 operator*(const Vec4 v, const f32 s) {
+    return vec4_mul(v, s);
+}
+
+inline f32 operator*(const Vec4 a, const Vec4 b) {
+    return vec4_dot(a, b);
+}
+
+inline Vec4 operator/(const Vec4 v, const f32 s) {
+    return vec4_div(v, s);
+}
 
 typedef struct mat2_t {
     f32 ele[2];
