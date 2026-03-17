@@ -1,4 +1,5 @@
 #include "shader.h"
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,38 +10,37 @@
 #include "../vendor/stb/stb_image_write.h"
 
 int main() {
-    Sampler image = {};
     bool success;
-    success = sampler_load("res/art_museum.jpg", &image);
+
+    Sampler start = {};
+    success = sampler_load("res/art_museum.jpg", &start);
     if (!success) {
         exit(3);
     }
 
-    Sampler new_image = {};
-    success = sampler_clone(&image, &new_image);
+    Sampler end = {};
+    success = sampler_clone(&start, &end);
     if (!success) {
         exit(3);
     }
 
-    for (usize row = 0; row < image.height; row++) {
-        for (usize col = 0; col < image.width; col++) {
-            Uniform uni = {};
-            Vec2 uv = vec2(((f32)col + 0.5) / image.width, ((f32)row + 0.5) / image.height);
-            Vec4 out = frag(&uni, &image, uv);
-            u8 *color = sampler_get(&new_image, col, row);
-            color[0] = out.x * 255.0;
-            color[1] = out.y * 255.0;
-            color[2] = out.z * 255.0;
+#pragma omp parallel for
+    for (usize row = 0; row < end.height; row++) {
+        for (usize col = 0; col < end.width; col++) {
+            Uniform uni = {.height = end.height, .width = end.width, .sampler_count = 1};
+            Vec2 uv = vec2(((f32)col + 0.5) / end.width, ((f32)row + 0.5) / end.height);
+            Vec4 color = frag(&uni, &start, uv);
+            sampler_set(&end, col, row, color);
         }
     }
 
-    success = sampler_write("target/output.png", &new_image);
+    success = sampler_write("target/output.png", &end);
     if (!success) {
         exit(3);
     }
 
-    sampler_free(image);
-    sampler_free(new_image);
+    sampler_free(start);
+    sampler_free(end);
     fprintf(stdout, "Image processed\n");
     fflush(stdout);
     return 0;

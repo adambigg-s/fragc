@@ -4,7 +4,6 @@
 #include "../vendor/stb/stb_image.h"
 #include "../vendor/stb/stb_image_write.h"
 #include <assert.h>
-#include <deque>
 #include <float.h>
 #include <math.h>
 #include <stdbool.h>
@@ -49,30 +48,6 @@ f32 vec2_mag(Vec2 v);
 
 Vec2 vec2_normalize(Vec2 v);
 
-inline Vec2 operator-(const Vec2 v) {
-    return vec2_neg(v);
-}
-
-inline Vec2 operator+(const Vec2 a, const Vec2 b) {
-    return vec2_add(a, b);
-}
-
-inline Vec2 operator-(const Vec2 a, const Vec2 b) {
-    return vec2_sub(a, b);
-}
-
-inline Vec2 operator*(const Vec2 v, const f32 s) {
-    return vec2_mul(v, s);
-}
-
-inline f32 operator*(const Vec2 a, const Vec2 b) {
-    return vec2_dot(a, b);
-}
-
-inline Vec2 operator/(const Vec2 v, const f32 s) {
-    return vec2_div(v, s);
-}
-
 typedef struct vec3_t {
     f32 x;
     f32 y;
@@ -96,30 +71,6 @@ f32 vec3_dot(Vec3 a, Vec3 b);
 f32 vec3_mag(Vec3 v);
 
 Vec3 vec3_normalize(Vec3 v);
-
-inline Vec3 operator-(const Vec3 v) {
-    return vec3_neg(v);
-}
-
-inline Vec3 operator+(const Vec3 a, const Vec3 b) {
-    return vec3_add(a, b);
-}
-
-inline Vec3 operator-(const Vec3 a, const Vec3 b) {
-    return vec3_sub(a, b);
-}
-
-inline Vec3 operator*(const Vec3 v, const f32 s) {
-    return vec3_mul(v, s);
-}
-
-inline f32 operator*(const Vec3 a, const Vec3 b) {
-    return vec3_dot(a, b);
-}
-
-inline Vec3 operator/(const Vec3 v, const f32 s) {
-    return vec3_div(v, s);
-}
 
 typedef struct vec4_t {
     f32 x;
@@ -146,63 +97,45 @@ f32 vec4_mag(Vec4 v);
 
 Vec4 vec4_normalize(Vec4 v);
 
-inline Vec4 operator-(const Vec4 v) {
-    return vec4_neg(v);
-}
-
-inline Vec4 operator+(const Vec4 a, const Vec4 b) {
-    return vec4_add(a, b);
-}
-
-inline Vec4 operator-(const Vec4 a, const Vec4 b) {
-    return vec4_sub(a, b);
-}
-
-inline Vec4 operator*(const Vec4 v, const f32 s) {
-    return vec4_mul(v, s);
-}
-
-inline f32 operator*(const Vec4 a, const Vec4 b) {
-    return vec4_dot(a, b);
-}
-
-inline Vec4 operator/(const Vec4 v, const f32 s) {
-    return vec4_div(v, s);
-}
-
 typedef struct mat2_t {
-    f32 ele[2];
+    f32 ele[2 * 2];
 } Mat2;
 
 f32 mat2_get(const Mat2 *mat, usize i, usize j);
 
 f32 *mat2_get_mut(Mat2 *mat, usize i, usize j);
 
-Vec2 mat2_mul2(Mat2 m, Vec2 v);
+Mat2 mat2_muls(Mat2 m, f32 s);
+
+Vec2 mat2_mulv(Mat2 m, Vec2 v);
 
 Mat2 mat2_mulm(Mat2 a, Mat2 b);
 
 typedef struct mat3_t {
-    f32 ele[3];
+    f32 ele[3 * 3];
 } Mat3;
 
 f32 mat3_get(const Mat3 *mat, usize i, usize j);
 
 f32 *mat3_get_mut(Mat3 *mat, usize i, usize j);
 
-Vec3 mat3_mul3(Mat3 m, Vec3 v);
+Mat3 mat3_muls(Mat3 m, f32 s);
+
+Vec3 mat3_mulv(Mat3 m, Vec3 v);
 
 Mat3 mat3_mulm(Mat3 a, Mat3 b);
 
 typedef struct mat4_t {
-    f32 ele[4];
+    f32 ele[4 * 4];
 } Mat4;
 
 f32 mat4_get(const Mat4 *mat, usize i, usize j);
 
 f32 *mat4_get_mut(Mat4 *mat, usize i, usize j);
 
-Vec4 mat4_mul4(Mat4 m, Vec4 v);
+Mat4 mat4_muls(Mat4 m, f32 s);
+
+Vec4 mat4_mulv(Mat4 m, Vec4 v);
 
 Mat4 mat4_mulm(Mat4 a, Mat4 b);
 
@@ -229,13 +162,13 @@ Vec4 sample(const Sampler *sampler, SamplerMethod method, f32 x, f32 y);
 
 bool sampler_new(Sampler *sampler, usize width, usize height);
 
-u8 *sampler_get(Sampler *sampler, usize x, usize y);
+void sampler_set(Sampler *sampler, usize x, usize y, Vec4 data);
 
 bool sampler_clone(const Sampler *from, Sampler *target);
 
-bool sampler_load(char *path, Sampler *sampler);
+bool sampler_load(const char *path, Sampler *sampler);
 
-bool sampler_write(char *path, Sampler *sampler);
+bool sampler_write(const char *path, Sampler *sampler);
 
 void sampler_free(Sampler sampler);
 

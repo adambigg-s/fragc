@@ -154,9 +154,21 @@ f32 *mat2_get_mut(Mat2 *mat, usize i, usize j) {
     return &mat->ele[2 * i + j];
 }
 
-Vec2 mat2_mul2(Mat2 m, Vec2 v) {
-    return vec2(vec2_dot(vec2(mat2_get(&m, 0, 0), mat2_get(&m, 0, 1)), v),
-        vec2_dot(vec2(mat2_get(&m, 1, 0), mat2_get(&m, 1, 1)), v));
+Mat2 mat2_muls(Mat2 m, f32 s) {
+    Mat2 res = {0};
+    for (usize i = 0; i < 4; i++) {
+        res.ele[i] = m.ele[i] * s;
+    }
+    return res;
+}
+
+Vec2 mat2_mulv(Mat2 m, Vec2 v) {
+    // clang-format off
+    return vec2(
+        vec2_dot(vec2(mat2_get(&m, 0, 0), mat2_get(&m, 0, 1)), v),
+        vec2_dot(vec2(mat2_get(&m, 1, 0), mat2_get(&m, 1, 1)), v)
+    );
+    // clang-format on
 }
 
 Mat2 mat2_mulm(Mat2 a, Mat2 b) {
@@ -179,10 +191,22 @@ f32 *mat3_get_mut(Mat3 *mat, usize i, usize j) {
     return &mat->ele[3 * i + j];
 }
 
-Vec3 mat3_mul3(Mat3 m, Vec3 v) {
-    return vec3(vec3_dot(vec3(mat3_get(&m, 0, 0), mat3_get(&m, 0, 1), mat3_get(&m, 0, 2)), v),
+Mat3 mat3_muls(Mat3 m, f32 s) {
+    Mat3 res = {0};
+    for (usize i = 0; i < 4; i++) {
+        res.ele[i] = m.ele[i] * s;
+    }
+    return res;
+}
+
+Vec3 mat3_mulv(Mat3 m, Vec3 v) {
+    // clang-format off
+    return vec3(
+        vec3_dot(vec3(mat3_get(&m, 0, 0), mat3_get(&m, 0, 1), mat3_get(&m, 0, 2)), v),
         vec3_dot(vec3(mat3_get(&m, 1, 0), mat3_get(&m, 1, 1), mat3_get(&m, 1, 2)), v),
-        vec3_dot(vec3(mat3_get(&m, 2, 0), mat3_get(&m, 2, 1), mat3_get(&m, 2, 2)), v));
+        vec3_dot(vec3(mat3_get(&m, 2, 0), mat3_get(&m, 2, 1), mat3_get(&m, 2, 2)), v)
+    );
+    // clang-format on
 }
 
 Mat3 mat3_mulm(Mat3 a, Mat3 b) {
@@ -205,12 +229,23 @@ f32 *mat4_get_mut(Mat4 *mat, usize i, usize j) {
     return &mat->ele[4 * i + j];
 }
 
-Vec4 mat4_mul4(Mat4 m, Vec4 v) {
+Mat4 mat4_muls(Mat4 m, f32 s) {
+    Mat4 res = {0};
+    for (usize i = 0; i < 4; i++) {
+        res.ele[i] = m.ele[i] * s;
+    }
+    return res;
+}
+
+Vec4 mat4_mulv(Mat4 m, Vec4 v) {
+    // clang-format off
     return vec4(
         vec4_dot(vec4(mat4_get(&m, 0, 0), mat4_get(&m, 0, 1), mat4_get(&m, 0, 2), mat4_get(&m, 0, 3)), v),
         vec4_dot(vec4(mat4_get(&m, 1, 0), mat4_get(&m, 1, 1), mat4_get(&m, 1, 2), mat4_get(&m, 1, 3)), v),
         vec4_dot(vec4(mat4_get(&m, 2, 0), mat4_get(&m, 2, 1), mat4_get(&m, 2, 2), mat4_get(&m, 2, 3)), v),
-        vec4_dot(vec4(mat4_get(&m, 3, 0), mat4_get(&m, 3, 1), mat4_get(&m, 3, 2), mat4_get(&m, 3, 3)), v));
+        vec4_dot(vec4(mat4_get(&m, 3, 0), mat4_get(&m, 3, 1), mat4_get(&m, 3, 2), mat4_get(&m, 3, 3)), v)
+    );
+    // clang-format on
 }
 
 Mat4 mat4_mulm(Mat4 a, Mat4 b) {
