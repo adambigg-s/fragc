@@ -1,3 +1,4 @@
+#include "../vendor/minifb/include/MiniFB.h"
 #include "shader.h"
 #include <omp.h>
 #include <stdio.h>
@@ -24,13 +25,43 @@ int main() {
         exit(3);
     }
 
+    struct mfb_window *frame_buffer = mfb_open("FragC", end.width, end.height);
+    if (!frame_buffer) {
+        fprintf(stderr, "Error opening window");
+        exit(3);
+    }
+    mfb_set_target_fps(10);
+
+    while (true) {
+        if (mfb_get_key_buffer(frame_buffer)[KB_KEY_ESCAPE]) {
+            break;
+        }
+
 #pragma omp parallel for
-    for (usize row = 0; row < end.height; row++) {
-        for (usize col = 0; col < end.width; col++) {
-            Uniform uni = {.height = end.height, .width = end.width, .sampler_count = 1};
-            Vec2 uv = vec2(((f32)col + 0.5) / end.width, ((f32)row + 0.5) / end.height);
-            Vec4 color = frag(&uni, &start, uv);
-            sampler_set(&end, col, row, color);
+        for (usize row = 0; row < end.height; row++) {
+            for (usize col = 0; col < end.width; col++) {
+                Uniform uni = {.vp_height = end.height, .vp_width = end.width, .sampler_count = 1};
+                Vec2 uv = vec2(((f32)col + 0.5) / end.width, ((f32)row + 0.5) / end.height);
+                Vec4 color = frag(&uni, &start, uv);
+                sampler_set(&end, col, row, color);
+            }
+        }
+#pragma endregion
+
+        mfb_wait_sync(frame_buffer);
+        bool updated = false;
+        if (mfb_get_key_buffer(frame_buffer)[KB_KEY_R]) {
+            updated = true;
+        }
+        if (updated) {
+            if (mfb_update_ex(frame_buffer, end.data, end.width, end.height)) {
+                updated = false;
+                break;
+            }
+        } else {
+            if (mfb_update_events(frame_buffer)) {
+                break;
+            }
         }
     }
 
@@ -43,5 +74,6 @@ int main() {
     sampler_free(end);
     fprintf(stdout, "Image processed\n");
     fflush(stdout);
+    mfb_close(frame_buffer);
     return 0;
 }

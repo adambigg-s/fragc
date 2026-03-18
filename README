@@ -1,1 +1,27 @@
-# fragc
+================================================================================
+fragc
+================================================================================
+
+fragc is a tiny ShaderToy-like program in C for writing pixel shaders that run
+on the CPU. You write a function that fulfills the frag() interface in a .c or
+.cpp file and the processed image is displayed.
+
+BUILDING
+--------
+
+Try running:
+	$ build.bat <shader source>
+and see what happens
+
+HOT-LOADING
+-----------
+
+This doesn't work yet.
+
+C++ OVERLOADS
+-------------
+
+The whole project should be able to be compiled with either clang or clang++
+to allow the shaders to be written with +, -, *, / overloads for the vector and
+matrix types. This makes writing the shaders more convenient and more similar to
+writing GLSL.

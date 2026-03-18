@@ -140,16 +140,17 @@ Vec4 mat4_mulv(Mat4 m, Vec4 v);
 Mat4 mat4_mulm(Mat4 a, Mat4 b);
 
 typedef struct uniform_t {
-    f32 time;
-    i32 width;
-    i32 height;
+    f32 elapsed_time;
+    i32 vp_width;
+    i32 vp_height;
+    Vec4 mouse_pos;
     usize sampler_count;
 } Uniform;
 
 typedef enum sample_method_t {
     Nearest,
     Bilinear,
-    Trilinear,
+    Bicubic,
 } SamplerMethod;
 
 typedef struct sampler_t {

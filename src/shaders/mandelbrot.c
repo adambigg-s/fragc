@@ -5,7 +5,7 @@ Vec2 mandel(Vec2 z, Vec2 c) {
 }
 
 Vec4 frag(const Uniform *uniform, const Sampler *sampler, Vec2 uv) {
-    f32 aspect = (f32)uniform->width / (f32)uniform->height;
+    f32 aspect = (f32)uniform->vp_width / (f32)uniform->vp_height;
     f32 zoom = 0.0015;
     Vec2 center = vec2(-0.74580, 0.100);
     Vec2 p = vec2((uv.x * 2.0 - 1.0) * aspect, uv.y * 2.0 - 1.0);

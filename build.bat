@@ -1,7 +1,8 @@
 @echo off
 
 set CC=clang
-set CFLAGS=-O3 -Wall -g -fopenmp
+set CFLAGS=-Wall -g
+set LIBS=-fopenmp -lgdi32 -luser32 -lwinmm
 set COMMAND=%1
 set SHADER=%2
 
@@ -28,7 +29,17 @@ echo Cleaned
 goto end
 
 :build
-%CC% %CFLAGS% -o .\target\main.exe .\src\main.c .\src\shader_impl.c .\src\math_impl.c %SHADER%
+%CC% ^
+	%CFLAGS% ^
+	-o ^
+	.\target\main.exe ^
+	.\src\*.c ^
+	.\vendor\minifb\src\*.c ^
+	.\vendor\minifb\src\windows\*.c ^
+	%SHADER% ^
+	-I .\vendor\minifb\include ^
+	-I .\vendor\minifb\src ^
+	%LIBS%
 echo Built
 goto end
 
