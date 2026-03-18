@@ -1,19 +1,22 @@
 #include "../vendor/minifb/include/MiniFB.h"
 #include "hot_reload.h"
 #include "shader.h"
+#include <minwindef.h>
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <winnt.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "../vendor/stb/stb_image.h"
+static const char *dll_paths[2] = {
+    "./target/shader0.dll",
+    "./target/shader1.dll",
+};
+static bool dll_flip = false;
+static FragFn frag_fn = NULL;
+static HMODULE dll_lib = NULL;
+static FILETIME save_time = {};
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "../vendor/stb/stb_image_write.h"
-
-// static FragFn frag_fn = NULL;
-
-int main() {
+i32 main(i32 argc, char *arvg[]) {
     bool success;
 
     Sampler start = {};
@@ -35,35 +38,36 @@ int main() {
     }
     mfb_set_target_fps(60);
 
+    hr_reload(dll_paths[(usize)dll_flip], &dll_lib, &frag_fn);
+
     char *file_name = "src/shaders/test.c";
-    FILETIME last_time = {0};
-    hr_changed_time(file_name, &last_time);
+    hr_get_time(file_name, &save_time);
 
     while (true) {
         if (mfb_get_key_buffer(frame_buffer)[KB_KEY_ESCAPE]) {
             break;
         }
 
-        FILETIME new_time = {0};
-        hr_changed_time(file_name, &new_time);
-
         mfb_wait_sync(frame_buffer);
-        bool updated = false;
-        if (mfb_get_key_buffer(frame_buffer)[KB_KEY_R]) {
-            updated = true;
+
+        bool updated = mfb_get_key_buffer(frame_buffer)[KB_KEY_R];
+
+        if (hr_has_changed(file_name, &save_time)) {
+            dll_flip = !dll_flip;
+            if (hr_reload(dll_paths[dll_flip], &dll_lib, &frag_fn)) {
+                updated = true;
+            } else {
+                break;
+            }
         }
 
-        if (hr_compare_times(&last_time, &new_time) != FtEqual) {
-            updated = true;
-        }
-        last_time = new_time;
-        if (updated) {
+        if (updated && frag_fn) {
 #pragma omp parallel for
             for (usize row = 0; row < end.height; row++) {
                 for (usize col = 0; col < end.width; col++) {
                     Uniform uni = {.vp_height = end.height, .vp_width = end.width, .sampler_count = 1};
                     Vec2 uv = vec2(((f32)col + 0.5) / end.width, ((f32)row + 0.5) / end.height);
-                    Vec4 color = frag(&uni, &start, uv);
+                    Vec4 color = (frag_fn)(&uni, &start, uv);
                     sampler_set(&end, col, row, color);
                 }
             }

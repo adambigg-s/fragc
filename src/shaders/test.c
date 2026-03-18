@@ -13,7 +13,7 @@ f32 dither_thresh(usize x, usize y) {
     return mat4_get(&DITHER, y, x);
 }
 
-Vec4 frag(const Uniform *uniform, const Sampler *sampler, Vec2 uv) {
+/* extern */ __declspec(dllexport) Vec4 frag(const Uniform *uniform, const Sampler *sampler, Vec2 uv) {
     Vec4 col = sample(sampler, Bilinear, uv.x, uv.y);
 
     usize x = (usize)(uv.x * sampler->width / 4) % 4;

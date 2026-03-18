@@ -1,5 +1,11 @@
 #include "shader.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../vendor/stb/stb_image.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "../vendor/stb/stb_image_write.h"
+
 Vec4 sampler_sample_nearest(const Sampler *sampler, f32 x, f32 y);
 
 Vec4 sampler_sample_bilinear(const Sampler *sampler, f32 x, f32 y);

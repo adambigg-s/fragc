@@ -173,8 +173,6 @@ bool sampler_write(const char *path, Sampler *sampler);
 
 void sampler_free(Sampler sampler);
 
-extern Vec4 frag(const Uniform *uniform, const Sampler *sampler, Vec2 uv);
-
 typedef Vec4 (*FragFn)(const Uniform *uniform, const Sampler *sampler, Vec2 uv);
 
 f32 minx(f32 a, f32 b);
