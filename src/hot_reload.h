@@ -17,7 +17,7 @@ typedef enum file_time_ordering_t {
 } FileTimeOrdering;
 
 static bool hr_get_time(const char *file_name, FILETIME *filetime) {
-    HANDLE handle = CreateFileA(
+    HANDLE handle = CreateFile(
         file_name, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (!handle) {
         fprintf(stderr, "Error getting file handle %s\n", file_name);
@@ -35,10 +35,10 @@ static bool hr_get_time(const char *file_name, FILETIME *filetime) {
 }
 
 static FileTimeOrdering hr_compare_times(const FILETIME *rhs, const FILETIME *lhs) {
-    if (rhs->dwHighDateTime < lhs->dwHighDateTime) {
-        return FtLess;
-    } else if (rhs->dwHighDateTime > lhs->dwHighDateTime) {
-        return FtGreater;
+    if (rhs->dwHighDateTime != lhs->dwHighDateTime) {
+        return rhs->dwHighDateTime < lhs->dwHighDateTime ? FtLess : FtGreater;
+    } else if (rhs->dwLowDateTime != lhs->dwLowDateTime) {
+        return rhs->dwLowDateTime < lhs->dwLowDateTime ? FtLess : FtGreater;
     } else {
         return FtEqual;
     }
@@ -46,43 +46,46 @@ static FileTimeOrdering hr_compare_times(const FILETIME *rhs, const FILETIME *lh
 
 static bool hr_has_changed(const char *file_name, FILETIME *filetime) {
     FILETIME curr_time;
-    hr_get_time(file_name, &curr_time);
+    if (!hr_get_time(file_name, &curr_time)) {
+        return false;
+    }
     FileTimeOrdering comparison = hr_compare_times(filetime, &curr_time);
     *filetime = curr_time;
     return comparison != FtEqual;
 }
 
-static bool hr_reload(const char *out_dll_path, HMODULE *old_lib, FragFn *out_frag) {
+static bool hr_reload(const char *dlib_path, const char *shader_path, HMODULE *dlib, FragFn *frag) {
     char cmd_buffer[1024];
     snprintf(cmd_buffer, sizeof(cmd_buffer),
-        "clang -O3 -shared "
+        "clang -O2 -shared "
         "-o %s "
-        "./src/shaders/test.c ./src/math_impl.c ./src/shader_impl.c",
-        out_dll_path);
+        "%s ./src/math_impl.c ./src/shader_impl.c"
+        "\n",
+        dlib_path, shader_path);
     fprintf(stdout, "Hot-Reload: %s\n", cmd_buffer);
-    if (!system(cmd_buffer)) {
+    if (system(cmd_buffer)) {
         fprintf(stderr, "Shader compilation failed\n");
-    }
-
-    HMODULE lib = LoadLibrary(out_dll_path);
-    if (!lib) {
-        fprintf(stderr, "LoadLibrary failed\n");
-    }
-
-    FragFn fn = (FragFn)GetProcAddress(lib, "frag");
-    if (!fn) {
-        fprintf(stderr, "GetProcAddress failed\n");
-        FreeLibrary(lib);
         return false;
     }
 
-    if (*old_lib) {
-        FreeLibrary(*old_lib);
+    HMODULE new_dlib = LoadLibrary(dlib_path);
+    if (!new_dlib) {
+        fprintf(stderr, "LoadLibrary failed\n");
+        return false;
     }
-    *old_lib = lib;
-    *out_frag = fn;
-    fprintf(stdout, "Hot-Reload loaded %s\n", out_dll_path);
 
+    FragFn frag_fn = (FragFn)GetProcAddress(new_dlib, "frag");
+    if (!frag_fn) {
+        fprintf(stderr, "GetProcAddress failed\n");
+        FreeLibrary(new_dlib);
+        return false;
+    }
+
+    FreeLibrary(*dlib);
+    *dlib = new_dlib;
+    *frag = frag_fn;
+
+    fprintf(stdout, "Hot-Reload loaded %s\n", dlib_path);
     fflush(stdout);
     return true;
 }

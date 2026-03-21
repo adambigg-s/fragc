@@ -6,19 +6,31 @@ fragc is a tiny ShaderToy-like program in C for writing pixel shaders that run
 on the CPU. You write a function that fulfills the frag() interface in a .c or
 .cpp file and the processed image is displayed.
 
+This program will only work on Windows 11.
+
 BUILDING
 --------
 
-Try running:
-	$ build.bat <shader source>
-and see what happens
+Blank buffer:
+	$ run_app.bat
+
+Image process:
+	$ app_run.bat <image path>
+
+Image process with shader:
+	$ app_run.bat <image path> <shader path>
+
+If a shader path isn't specific, the default shader fill will be loaded. It is ./src/shaders/main.c.
+
+Images are output into ./target/output.png by default.
 
 HOT-LOADING
 -----------
 
-This doesn't work yet.
+Pressing 'R' will re-load the current selected instantly.
 
-It works half of the time, idk what's happening.
+If the shader file's metadata changes, it will automatically be recompiled and
+reloaded.
 
 C++ OVERLOADS
 -------------
@@ -27,3 +39,21 @@ The whole project should be able to be compiled with either clang or clang++
 to allow the shaders to be written with +, -, *, / overloads for the vector and
 matrix types. This makes writing the shaders more convenient and more similar to
 writing GLSL.
+
+SHADER UNIFORMS
+---------------
+
+Shaders must follow the function signature:
+	typedef Vec4 (*FragFn)(const Uniform *uniform, const Sampler *sampler, Vec2 uv);
+
+The shader entry point must be named 'frag' so that the LibLoader can find it.
+
+Shaders will take:
+	typedef struct uniform_t {
+	    f32 elapsed_time;    // frame-time elapsed in seconds
+	    i32 vp_width;        // viewport width
+	    i32 vp_height;       // viewport height
+	    Vec4 mouse_pos;      // .zw if mouse is clicked, .xy otherwise
+	    usize sampler_count; // Number of textures *sampler points to
+	} Uniform;
+

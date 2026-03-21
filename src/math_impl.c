@@ -42,6 +42,14 @@ Vec2 vec2(f32 x, f32 y) {
     return (Vec2){.x = x, .y = y};
 }
 
+Vec2 vec2_zero() {
+    return (Vec2){.x = 0.0, .y = 0.0};
+}
+
+Vec2 vec2_splat(f32 val) {
+    return (Vec2){.x = val, .y = val};
+}
+
 Vec2 vec2_neg(Vec2 v) {
     return (Vec2){.x = -v.x, .y = -v.y};
 }
@@ -78,6 +86,14 @@ Vec3 vec3(f32 x, f32 y, f32 z) {
     return (Vec3){.x = x, .y = y, .z = z};
 }
 
+Vec3 vec3_zero() {
+    return (Vec3){.x = 0.0, .y = 0.0, .z = 0.0};
+}
+
+Vec3 vec3_splat(f32 val) {
+    return (Vec3){.x = val, .y = val, .z = val};
+}
+
 Vec3 vec3_neg(Vec3 v) {
     return (Vec3){.x = -v.x, .y = -v.y, .z = -v.z};
 }
@@ -112,6 +128,14 @@ Vec3 vec3_normalize(Vec3 v) {
 
 Vec4 vec4(f32 x, f32 y, f32 z, f32 w) {
     return (Vec4){.x = x, .y = y, .z = z, .w = w};
+}
+
+Vec4 vec4_zero() {
+    return (Vec4){.x = 0.0, .y = 0.0, .z = 0.0, .w = 0.0};
+}
+
+Vec4 vec4_splat(f32 val) {
+    return (Vec4){.x = val, .y = val, .z = val, .w = val};
 }
 
 Vec4 vec4_neg(Vec4 v) {

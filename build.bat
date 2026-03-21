@@ -8,7 +8,7 @@ set SHADER=%2
 
 if "%COMMAND%"=="" (
 	set COMMAND=all
-	set SHADER=.\src\shaders\test.c
+	set SHADER=.\src\shaders\main.c
 )
 
 if "%COMMAND%"=="all" goto all

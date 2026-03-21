@@ -32,6 +32,10 @@ typedef struct vec2_t {
 
 Vec2 vec2(f32 x, f32 y);
 
+Vec2 vec2_zero();
+
+Vec2 vec2_splat(f32 val);
+
 Vec2 vec2_neg(Vec2 v);
 
 Vec2 vec2_add(Vec2 a, Vec2 b);
@@ -55,6 +59,10 @@ typedef struct vec3_t {
 } Vec3;
 
 Vec3 vec3(f32 x, f32 y, f32 z);
+
+Vec3 vec3_zero();
+
+Vec3 vec3_splat(f32 val);
 
 Vec3 vec3_neg(Vec3 v);
 
@@ -80,6 +88,10 @@ typedef struct vec4_t {
 } Vec4;
 
 Vec4 vec4(f32 x, f32 y, f32 z, f32 w);
+
+Vec4 vec4_zero();
+
+Vec4 vec4_splat(f32 val);
 
 Vec4 vec4_neg(Vec4 v);
 
