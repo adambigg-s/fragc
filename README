@@ -20,7 +20,8 @@ Image process:
 Image process with shader:
 	$ app_run.bat <image path> <shader path>
 
-If a shader path isn't specific, the default shader fill will be loaded. It is ./src/shaders/main.c.
+If a shader path isn't specific, the default shader fill will be loaded. It is
+./src/shaders/main.c.
 
 Images are output into ./target/output.png by default.
 
@@ -56,4 +57,3 @@ Shaders will take:
 	    Vec4 mouse_pos;      // .zw if mouse is clicked, .xy otherwise
 	    usize sampler_count; // Number of textures *sampler points to
 	} Uniform;
-
